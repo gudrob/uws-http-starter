@@ -6,7 +6,7 @@
 
 Because it has its share of pitfalls I have created this fully typed starter kit. Originally made for myself but I'm sure someone can make use of it.
 
-The starter kit has less than 200 Lines of Code but provides you with a different router and request approach so you can keep your app structured and can use NodeJS in all its async glory.
+The starter kit has less than 200 Lines of Code but provides you with an alternate router and request approach for µWebSockets so you can keep your app structured and can use NodeJS in all its async glory.
 
 µWebSockets binaries for windows, linux (arm/x64) and macOS are already included.
 
