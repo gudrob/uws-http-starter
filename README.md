@@ -28,7 +28,7 @@ Benchmark Command: wrk -t2 -c1000 -d60s http://127.0.0.1:80/
 
 µWebSockets.JS:
 
-    this.app.any(path, (response: HttpResponse, request: HttpRequest) => {
+    this.app.any('/*', (response: HttpResponse, request: HttpRequest) => {
         let body = '';
         res.onData(async (data: ArrayBuffer, isLast: boolean) => {
             body += data;
