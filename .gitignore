@@ -104,5 +104,5 @@ dist
 .tern-port
 
 # Don't ignore uws files!
-.build/
-!.build/uws
+build/*
+!build/uws
