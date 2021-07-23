@@ -1,0 +1,23 @@
+{
+  "name": "uws-node-starter",
+  "version": "1.0.0",
+  "description": "A starter pack for using uws http with nodeJS",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "go": "tsc && node build/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/McDucc/uws-node-starter.git"
+  },
+  "author": "McDucc / Robert Gudat",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/McDucc/uws-node-starter/issues"
+  },
+  "homepage": "https://github.com/McDucc/uws-node-starter#readme",
+  "dependencies": {
+    "@types/node": "^16.4.1"
+  }
+}
