@@ -63,7 +63,7 @@ Node HTTP:
 116323.61 requests/sec
 
 ##### µWebSockets.JS:
- 165690.66 requests/sec
+ 165690.66 requests/sec (42,5% gain)
 
 No errors in all runs
 
