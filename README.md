@@ -60,10 +60,10 @@ Node HTTP:
 #### Average of 10 sequential runs:
 
 ##### Node HTTP:
-49605.77 requests/sec
+116323.61 requests/sec
 
 ##### µWebSockets.JS:
-82742.49 requests/sec
+ 165690.66 requests/sec
 
 No errors in all runs
 
