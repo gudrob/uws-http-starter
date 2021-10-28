@@ -19,14 +19,18 @@ After a quick npm install you can compile and start the example server using
 You main app file will probably only include your routes, which will link to the functions defined on your controllers.
 The strucure of your router definition could be something like this:
 
+```javascript
     let app: TemplatedApp = uws.App({});
+```
 
 Initializes a new App; you can alternatively use uws.SSLApp for https connections.
 
+```javascript
     let router = new Router(app);
+```
     
 Initializes a new router 
-
+```javascript
     router.endpoint('get', Controller.async);
     
     router.group('group', () => {
@@ -45,16 +49,14 @@ Initializes a new router
 
         });
     });
+```
     
 Intializes the following routes pointing to the assigned controller functions:
 
-GET: /async
-
-POST: /group/sync
-
-GET: /group/async
-
-GET: /group/middleware
+- GET: /async
+- POST: /group/sync
+- GET: /group/async
+- GET: /group/middleware
 
 
 The first route is only matched by a GET-Request to /async
@@ -71,10 +73,12 @@ The fourth route passes through ExampleMiddleware1 and then ExampleMiddleware2 b
 The router allows you to define middlewares that can preprocess requests for multiple endpoints.
 This way you can for example add an authentication layer with 2 lines of code for all your routes even if you already have hundreds defined.
 
+```javascript
     let Middleware = function (request: RequestData, response: HttpResponse, next: NextFunction): void {
         response.writeStatus("202 Accepted");
         next(request, response, next);
     }
+```
     
 This middleware writes the HTTP status code 202 to our response.
 The next parameter specifies which function will be called when the middleware was successfully passed.
@@ -83,20 +87,22 @@ Otherwise you could for example end the request.
 
 #### Controllers
 
+```javascript
     export default class Controller {
 
         public static async(req: RequestData, response: HttpResponse) {
-            response.end('middleware called');
+            response.end('Controller.async called');
         }
 
         public static sync(req: RequestData, response: HttpResponse) {
-            response.end('middleware called');
+            response.end('Controller.sync called');
         }
 
         public static middleware(req: RequestData, response: HttpResponse) {
-            response.end('middleware called');
+            response.end('Controller.middleware called');
         }
     }
+```
 
 The controller methods are by default designed to be static.
 If you require state within your controllers you might want to implement them as singletons.
@@ -126,6 +132,7 @@ Benchmark Command: wrk -t2 -c1000 -d60s http://127.0.0.1:80/
 
 µWebSockets.JS:
 
+```javascript
     app.any('/*', (response: HttpResponse, request: HttpRequest) => {
         let body = '';
         
@@ -139,9 +146,11 @@ Benchmark Command: wrk -t2 -c1000 -d60s http://127.0.0.1:80/
             }
         });
     });
-            
+```
+
 Node HTTP:
 
+```javascript
     createServer((request: IncomingMessage, response: ServerResponse) => {
         let body = '';
         request.on('data', (chunk: any) => {
@@ -152,8 +161,8 @@ Node HTTP:
             });
         });
     });
+```
         
-
 #### Average of 10 sequential runs:
 
 ##### Node HTTP:
