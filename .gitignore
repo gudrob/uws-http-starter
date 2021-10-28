@@ -103,6 +103,5 @@ dist
 # TernJS port file
 .tern-port
 
-# Don't ignore uws files!
+# Ignore build files
 build/*
-!build/uws
