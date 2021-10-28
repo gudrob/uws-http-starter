@@ -1,8 +1,9 @@
 import Controller from "./Controller";
-import { ExampleMiddleware } from "./ExampleMiddleware";
+import { ExampleMiddleware1 } from "./ExampleMiddleware1";
 import { Router } from "./Router";
 import { TemplatedApp } from "uWebSockets.js";
 import uws from 'uWebSockets.js';
+import { ExampleMiddleware2 } from "./ExampleMiddleware2";
 
 
 let app: TemplatedApp = uws.App({
@@ -19,13 +20,17 @@ router.group('examples', () => {
 
     router.endpoint('get', Controller.async);
 
-    router.endpoint('post', Controller.async);
+    router.endpoint('get', Controller.sync);
 
-    router.endpoint('get', Controller.hello);
+    router.middleware(ExampleMiddleware1, () => {
 
-    router.middleware(ExampleMiddleware, () => {
+        router.endpoint('post', Controller.async);
 
-        router.endpoint('get', Controller.me);
+        router.middleware(ExampleMiddleware2, () => {
+
+            router.endpoint('get', Controller.middleware);
+
+        });
 
     });
 });

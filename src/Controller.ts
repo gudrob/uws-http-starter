@@ -5,15 +5,15 @@ export default class Controller {
 
     public static async(req: RequestData, response: HttpResponse) {
         setTimeout(() => {
-            response.end(req.method + ': Hello World! Async!');
+            response.end('Controller.async called!');
         }, 100);
     }
 
-    public static hello(req: RequestData, response: HttpResponse) {
-        response.end('Hello World!');
+    public static sync(req: RequestData, response: HttpResponse) {
+        response.end('Controller.sync called!');
     }
 
-    public static me(req: RequestData, response: HttpResponse) {
-        response.end('It\'s a me!');
+    public static middleware(req: RequestData, response: HttpResponse) {
+        response.end('Controller.middleware called!');
     }
 }

@@ -8,9 +8,9 @@ import { HttpResponse } from "uWebSockets.js";
  * @param response 
  * @param next 
  */
-let ExampleMiddleware = function (request: RequestData, response: HttpResponse, next: NextFunction): void {
-    response.writeStatus("202 Accepted");
-    next(request, response, next);
+let ExampleMiddleware2 = function (request: RequestData, response: HttpResponse, next: NextFunction): void {
+    response.write('ExampleMiddleware2 called! ')
+    next(request, response);
 }
 
-export { ExampleMiddleware };
+export { ExampleMiddleware2 };

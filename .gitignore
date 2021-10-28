@@ -104,4 +104,4 @@ dist
 .tern-port
 
 # Ignore build files
-build/*
+build/
