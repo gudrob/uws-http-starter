@@ -1,6 +1,6 @@
 import NextFunction from "./NextFunction";
 import RequestData from "./RequestData";
-import { HttpResponse } from "./uws";
+import { HttpResponse } from "uWebSockets.js";
 
 /**
  * An example middleware adding a status code to the response

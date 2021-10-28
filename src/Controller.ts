@@ -1,11 +1,11 @@
 import RequestData from "./RequestData";
-import { HttpResponse } from "./uws";
+import { HttpResponse } from "uWebSockets.js";
 
 export default class Controller {
 
     public static async(req: RequestData, response: HttpResponse) {
         setTimeout(() => {
-            response.end('Hello World! Async!');
+            response.end(req.method + ': Hello World! Async!');
         }, 100);
     }
 

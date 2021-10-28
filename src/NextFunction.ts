@@ -1,4 +1,4 @@
-import { HttpResponse } from "./uws";
+import { HttpResponse } from "uWebSockets.js";
 import RequestData from "./RequestData";
 
 /**

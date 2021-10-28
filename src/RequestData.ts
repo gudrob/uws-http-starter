@@ -6,6 +6,7 @@ import Dictionary from "./Dictionary";
 export default class RequestData {
     constructor(
         public headers: Dictionary<string>,
+        public method: string,
         public data: string,
     ) { }
 }

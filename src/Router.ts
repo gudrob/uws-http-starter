@@ -1,4 +1,4 @@
-import { HttpRequest, HttpResponse, TemplatedApp } from "./uws";
+import { HttpRequest, HttpResponse, TemplatedApp } from "uWebSockets.js";
 import Dictionary from "./Dictionary";
 import NextFunction from "./NextFunction";
 import RequestData from "./RequestData";
@@ -16,6 +16,13 @@ export class Router {
 
     constructor(private app: TemplatedApp) { }
 
+    private getHttpMethod(method: string): string {
+        if (method === 'del') {
+            return 'DELETE'
+        }
+        return method.toUpperCase();
+    }
+
     /**
      * Adds a new middleware handler that is executed before the stack in the sub parameter.
      * Can be a request preprocessor or prematurely end the response like for example an authentication middleware
@@ -27,6 +34,7 @@ export class Router {
         sub();
         this.middlewareStack.pop();
     }
+
 
     /**
      * Adds a new group to the routes in sub
@@ -44,7 +52,7 @@ export class Router {
      * @param groupName the name of the group, e.g. "user" becomes "/user/" 
      * @param sub the stack called on this route
      */
-    endpoint(handler: (request: RequestData, response: HttpResponse) => void): void {
+    endpoint(method: 'del' | 'patch' | 'post' | 'get' | 'put' | 'head' | 'options', handler: (request: RequestData, response: HttpResponse) => void): void {
 
         //Route is created from the groups currently on the stack plus the handlers name
         this.groupStack.push(handler.name.toLowerCase());
@@ -60,10 +68,10 @@ export class Router {
             }
         });
 
-        this.routes.push(path);
+        this.routes.push(`${method}: ${path}`);
 
         //Path is assigned, ignoring request type
-        this.app.any(path, (res: HttpResponse, req: HttpRequest) => {
+        this.app[method](path, (res: HttpResponse, req: HttpRequest) => {
 
             //An abort handler is required by uws
             res.onAborted(() => {
@@ -83,6 +91,7 @@ export class Router {
                     currentHandler(
                         new RequestData(
                             headers,
+                            this.getHttpMethod(method),
                             body),
                         res);
                 }

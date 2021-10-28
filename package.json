@@ -11,13 +11,14 @@
     "type": "git",
     "url": "git+https://github.com/McDucc/uws-node-starter.git"
   },
-  "author": "McDucc / Robert Gudat",
+  "author": "McDuckes / Robert Gudat",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/McDucc/uws-node-starter/issues"
   },
   "homepage": "https://github.com/McDucc/uws-node-starter#readme",
   "dependencies": {
-    "@types/node": "^16.4.1"
+    "@types/node": "^16.4.1",
+    "uWebSockets.js": "uNetworking/uWebSockets.js#v20.1.0"
   }
 }
