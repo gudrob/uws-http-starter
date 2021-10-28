@@ -10,6 +10,106 @@ The starter kit has less than 200 Lines of Code but provides you with an alterna
 After a quick npm install you can compile and start the example server using
 
     npm run go
+    
+    
+### Usage
+
+#### Routing
+
+You main app file will probably only include your routes, which will link to the functions defined on your controllers.
+The strucure of your router definition could be something like this:
+
+    let app: TemplatedApp = uws.App({});
+
+Initializes a new App; you can alternatively use uws.SSLApp for https connections.
+
+    let router = new Router(app);
+    
+Initializes a new router 
+
+    router.endpoint('get', Controller.async);
+    
+    router.group('group', () => {
+
+    router.endpoint('post', Controller.sync);
+
+        router.middleware(ExampleMiddleware1, () => {
+
+            router.endpoint('get', Controller.async);
+
+            router.middleware(ExampleMiddleware2, () => {
+
+                router.endpoint('get', Controller.middleware);
+
+            });
+
+        });
+    });
+    
+Intializes the following routes pointing to the assigned controller functions:
+
+GET: /async
+
+POST: /group/sync
+
+GET: /group/async
+
+GET: /group/middleware
+
+
+The first route is only matched by a GET-Request to /async
+
+The sround route is only matched by a POST-Request to /group/sync
+
+The third route passes through ExampleMiddleware1 before its handler is called
+
+The fourth route passes through ExampleMiddleware1 and then ExampleMiddleware2 before its handler is called
+
+
+#### Middleware
+
+The router allows you to define middlewares that can preprocess requests for multiple endpoints.
+This way you can for example add an authentication layer with 2 lines of code for all your routes even if you already have hundreds defined.
+
+    let Middleware = function (request: RequestData, response: HttpResponse, next: NextFunction): void {
+        response.writeStatus("202 Accepted");
+        next(request, response, next);
+    }
+    
+This middleware writes the HTTP status code 202 to our response.
+The next parameter specifies which function will be called when the middleware was successfully passed.
+Otherwise you could for example end the request.
+
+
+#### Controllers
+
+    export default class Controller {
+
+        public static async(req: RequestData, response: HttpResponse) {
+            response.end('middleware called');
+        }
+
+        public static sync(req: RequestData, response: HttpResponse) {
+            response.end('middleware called');
+        }
+
+        public static middleware(req: RequestData, response: HttpResponse) {
+            response.end('middleware called');
+        }
+    }
+
+The controller methods are by default designed to be static.
+If you require state within your controllers you might want to implement them as singletons.
+
+
+#### RequestData
+
+The RequestData class is a wrapper around uws Request which is necessary for async functions as uws' request is stack-allocated an therefore stops existing once the base request handler finishes. Accessing the original request after this will cause an error.
+RequestData contains:
+
+- The requests headers as string
+- The method of the request
+- The body of the request
 
 
 ### An example benchmark showing why µWebSockets could be for you
