@@ -1,6 +1,6 @@
 import { HttpRequest, HttpResponse, TemplatedApp } from "uWebSockets.js";
-import Dictionary from "./Dictionary";
-import NextFunction from "./NextFunction";
+import Dictionary from "../misc/Dictionary";
+import { NextFunction } from "./NextFunction";
 import RequestData from "./RequestData";
 
 /**
@@ -9,7 +9,7 @@ import RequestData from "./RequestData";
  * much meant for a POST-only api since it does not handle query strings
  */
 export class Router {
-    private middlewareStack: Array<(request: RequestData, response: HttpResponse, next: NextFunction) => void> = [];
+    private middlewareStack: Array<(request: RequestData, next: NextFunction) => void> = [];
     private groupStack: Array<string> = [];
 
     private routes: Array<string> = [];
@@ -29,7 +29,7 @@ export class Router {
      * @param middleware
      * @param sub 
      */
-    middleware(middleware: (request: RequestData, response: HttpResponse, next: NextFunction) => void, sub: () => void): void {
+    middleware(middleware: (request: RequestData, next: NextFunction) => void, sub: () => void): void {
         this.middlewareStack.push(middleware);
         sub();
         this.middlewareStack.pop();
@@ -52,7 +52,7 @@ export class Router {
      * @param groupName the name of the group, e.g. "user" becomes "/user/" 
      * @param sub the stack called on this route
      */
-    endpoint(method: 'del' | 'patch' | 'post' | 'get' | 'put' | 'head' | 'options', handler: (request: RequestData, response: HttpResponse) => void): void {
+    endpoint(method: 'del' | 'patch' | 'post' | 'get' | 'put' | 'head' | 'options', handler: (request: RequestData) => void): void {
 
         //Route is created from the groups currently on the stack plus the handlers name
         this.groupStack.push(handler.name.toLowerCase());
@@ -63,8 +63,8 @@ export class Router {
         let currentHandler = handler;
         this.middlewareStack.forEach(middlewareUsed => {
             let referencedHandler = currentHandler;
-            currentHandler = (request: RequestData, response: HttpResponse) => {
-                middlewareUsed(request, response, referencedHandler);
+            currentHandler = (request: RequestData) => {
+                middlewareUsed(request, referencedHandler);
             }
         });
 
@@ -73,10 +73,8 @@ export class Router {
         //Path is assigned, ignoring request type
         this.app[method](path, (res: HttpResponse, req: HttpRequest) => {
 
-            //An abort handler is required by uws
-            res.onAborted(() => {
-                res.tryEnd('Request aborted', 32);
-            });
+            //An abort handler is required by uws as the response will not be available after connection termination
+            res.onAborted(() => res._hasEnded = true);
 
             let headers: Dictionary<string> = {};
             req.forEach((headerKey, headerValue) => {
@@ -92,8 +90,8 @@ export class Router {
                         new RequestData(
                             headers,
                             this.getHttpMethod(method),
-                            body),
-                        res);
+                            body,
+                            res));
                 }
             });
         })

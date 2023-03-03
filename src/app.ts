@@ -1,10 +1,9 @@
-import Controller from "./Controller";
-import { ExampleMiddleware1 } from "./ExampleMiddleware1";
-import { Router } from "./Router";
+import Controller from "./controllers/Controller";
+import { Router } from "./http/Router";
 import { TemplatedApp } from "uWebSockets.js";
 import uws from 'uWebSockets.js';
-import { ExampleMiddleware2 } from "./ExampleMiddleware2";
-
+import { ExampleMiddleware1 } from "./middleware/ExampleMiddleware1";
+import { ExampleMiddleware2 } from "./middleware/ExampleMiddleware2";
 
 let app: TemplatedApp = uws.App({
     //Use SSLApp and add your SSL config here if needed
@@ -16,9 +15,9 @@ let app: TemplatedApp = uws.App({
 let router = new Router(app);
 let port = 8080;
 
-router.group('examples', () => {
+router.endpoint('get', Controller.async);
 
-    router.endpoint('get', Controller.async);
+router.group('examples', () => {
 
     router.endpoint('get', Controller.sync);
 
