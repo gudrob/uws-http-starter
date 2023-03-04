@@ -52,9 +52,16 @@ export default class RequestData {
         return true;
     }
 
-    public end(body: RecognizedString): boolean {
+    /**
+     * Add a chunk of data to the response and end the response.
+     * The response cannot be written to after this.
+     * @param body
+     * @param closeConnection
+     * @returns If write was successful
+     */
+    public end(body: RecognizedString, closeConnection = false): boolean {
         if (this._hasEnded) return false;
-        this.internalResponse.end(body);
+        this.internalResponse.end(body, closeConnection);
         return true;
     }
 
