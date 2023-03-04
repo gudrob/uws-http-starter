@@ -13,6 +13,7 @@ export default class RequestData {
         public headers: Dictionary<string>,
         public method: string,
         public data: string,
+        public query: string,
         public internalResponse: HttpResponse
     ) { }
 

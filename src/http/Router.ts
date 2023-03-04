@@ -59,7 +59,7 @@ export class Router {
     serveFile(file: string, alias: string, cacheDuration: number = 10000) {
         this.endpoint('get', (request: RequestData) => {
             let cached = this.cached[file];
-            
+
             if (cached && cached.time > Date.now() - cacheDuration) {
                 request.end(cached.data);
             } else {
@@ -109,16 +109,18 @@ export class Router {
                 headers[headerKey] = headerValue;
             });
 
-            let body = '';
+            let body = Buffer.from('');
+            let query = req.getQuery();
             res.onData(async (data: ArrayBuffer, isLast: boolean) => {
-                body += data;
+                body = Buffer.concat([body, Buffer.from(data)]);
 
                 if (isLast) {
                     currentHandler(
                         new RequestData(
                             headers,
                             this.getHttpMethod(method),
-                            body,
+                            body.toString(),
+                            query,
                             res));
                 }
             });
