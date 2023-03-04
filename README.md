@@ -36,6 +36,8 @@ router.group('examples', () => {
 
     router.endpoint('get', Controller.sync);
 
+    router.serveFile(path.resolve(__dirname, './logo.jpg'), 'file');
+
     router.middleware(ExampleMiddleware1, () => {
 
         router.endpoint('post', Controller.async);
@@ -56,6 +58,7 @@ Intializes the following routes pointing to the assigned controller functions:
 - POST: /examples/sync
 - GET: /examples/async
 - GET: /examples/middleware
+- GET: /examples/file
 
 
 The first route is only matched by a GET-Request to /async
@@ -65,24 +68,6 @@ The second route is only matched by a POST-Request to /group/sync
 The third route passes through ExampleMiddleware1 before its handler is called
 
 The fourth route passes through ExampleMiddleware1 and then ExampleMiddleware2 before its handler is called
-
-
-#### Middleware
-
-The router allows you to define middlewares that can preprocess requests for multiple endpoints.
-This way you can for example add an authentication layer with 2 lines of code for all your routes even if you already have hundreds defined.
-
-```javascript
-    let Middleware = function (request: RequestData, next: NextFunction): void {
-        request.writeStatus("202 Accepted");
-        next(request);
-    }
-```
-    
-This middleware writes the HTTP status code 202 to our response.
-The next parameter specifies which function will be called when the middleware was successfully passed.
-Otherwise you could for example end the request.
-
 
 #### Controllers
 
@@ -105,6 +90,27 @@ Otherwise you could for example end the request.
 
 The controller methods are by default designed to be static.
 If you require state within your controllers you might want to implement them as singletons.
+
+#### Middleware
+
+The router allows you to define middlewares that can preprocess requests for multiple endpoints.
+This way you can for example add an authentication layer with 2 lines of code for all your routes even if you already have hundreds defined.
+
+```javascript
+    let Middleware = function (request: RequestData, next: NextFunction): void {
+        request.writeStatus("202 Accepted");
+        next(request);
+    }
+```
+    
+This middleware writes the HTTP status code 202 to our response.
+The next parameter specifies which function will be called when the middleware was successfully passed.
+Otherwise you could for example end the request.
+
+#### Files
+
+To serve files there is the function serveFile on the router that generates a GET endpoint with the specified alias.
+It will respond with the file and also allows you to specify a cache duration before the file is reloaded from storage.
 
 #### RequestData
 

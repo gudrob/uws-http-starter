@@ -2,6 +2,7 @@ import { HttpRequest, HttpResponse, TemplatedApp } from "uWebSockets.js";
 import Dictionary from "../misc/Dictionary";
 import { NextFunction } from "./NextFunction";
 import RequestData from "./RequestData";
+import * as fs from 'fs';
 
 /**
  * A simple router that keeps your app file structured by using a
@@ -48,14 +49,41 @@ export class Router {
     }
 
     /**
+     * Adds a get endpoint that serves a file.
+     * Reloads the file from disc when cacheDuration is reached
+     * @param file the absolute file path 
+     * @param alias the route's name
+     * @param cacheDuration the time to wait before refreshing from storage in ms
+     */
+    private cached: Dictionary<{ time: number, data: Buffer }> = {};
+    serveFile(file: string, alias: string, cacheDuration: number = 10000) {
+        this.endpoint('get', (request: RequestData) => {
+            let cached = this.cached[file];
+            
+            if (cached && cached.time > Date.now() - cacheDuration) {
+                request.end(cached.data);
+            } else {
+                fs.readFile(file, (err, data) => {
+                    if (err) throw err;
+                    this.cached[file] = {
+                        time: Date.now(),
+                        data
+                    }
+                });
+            }
+        }, alias);
+    }
+
+    /**
      * Adds an endpoint with a handler to be executed
      * @param groupName the name of the group, e.g. "user" becomes "/user/" 
      * @param sub the stack called on this route
+     * @param alias optional, will override the handlers name for the route
      */
-    endpoint(method: 'del' | 'patch' | 'post' | 'get' | 'put' | 'head' | 'options', handler: (request: RequestData) => void): void {
+    endpoint(method: 'del' | 'patch' | 'post' | 'get' | 'put' | 'head' | 'options', handler: (request: RequestData) => void, alias: string | undefined = undefined): void {
 
         //Route is created from the groups currently on the stack plus the handlers name
-        this.groupStack.push(handler.name.toLowerCase());
+        this.groupStack.push(alias ? alias : handler.name.toLowerCase());
         let path = "/" + this.groupStack.join('/');
         this.groupStack.pop();
 
