@@ -7,7 +7,7 @@ import RequestData from "../http/RequestData";
  * @param response 
  * @param next 
  */
-let ExampleMiddleware1 = function (request: RequestData, next: NextFunction) {
+let ExampleMiddleware1 = function (request: RequestData, next: NextFunction): void {
     request.write('ExampleMiddleware1 called! ')
     next(request);
 }
