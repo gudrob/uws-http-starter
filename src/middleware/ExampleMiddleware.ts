@@ -1,5 +1,4 @@
-import RequestData from "../http/RequestData";
-import { NextFunction } from "../http/NextFunction";
+import { RequestData, NextFunction } from "uws-router";
 
 /**
  * An example middleware adding a status code to the response

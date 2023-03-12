@@ -1,11 +1,11 @@
-# µWebSockets.js HTTP Server Starter Kit
+# uWebSockets.js HTTP Server Starter Kit
 
 ### A starter kit for nodejs projects using the http server of µWebSockets.js
 
-µWebSockets.js offers great performance not only for websockets but http servers aswell.
+uWebSockets.js offers great performance not only for websockets but http servers aswell.
 
 Because it has its share of pitfalls I have created this fully typed starter kit.
-The starter kit has less than 200 Lines of Code but provides you with an alternate router and request approach for µWebSockets.js so you can keep your app structured and use async functions easily.
+The starter provides you with an alternate router (from gudatr/uws-rooter) and request approach for µWebSockets.js and helper functions for files and middleware so you can keep your app structured and use async functions easily.
 
 After npm install you can compile and start the example server using
 
@@ -19,16 +19,18 @@ You main app file will probably only include your routes, which will link to the
 The strucure of your router definition could be something like this:
 
 ```javascript
-    let app: TemplatedApp = uws.App({});
+    let router = new Router(false, {
+    //Use SSLApp and add your SSL config here if needed
+    //See the μWebSockets.js docs for more info
+    //cert_file_name: 'server.cert',
+    //key_file_name: 'server.key'
+});
 ```
+Initializes a new router.
+If you choose to use SSL for https, you have to supply the key and cert file names.
+Otherwise a http app will be created.
 
-Initializes a new App; you can alternatively use uws.SSLApp for https connections.
 
-```javascript
-    let router = new Router(app);
-```
-    
-Initializes a new router 
 ```javascript
 router.endpoint('get', Controller.async);
 
@@ -68,6 +70,18 @@ The second route is only matched by a POST-Request to /group/sync
 The third route passes through ExampleMiddleware1 before its handler is called
 
 The fourth route passes through ExampleMiddleware1 and then ExampleMiddleware2 before its handler is called
+
+
+
+```javascript
+router.listen("127.0.0.1", 8080, (isListening) => {
+    console.log(isListening ? `Listening on port ${port}!` : `Error: Could not listen on port ${port}!`)
+})
+```
+
+Finally you need call listen on your router to make it listen for incoming requests.
+This example will launch on port 8080 on localhost / 127.0.0.1.
+isListening will contain the socket if successful, which we won't be using.
 
 #### Controllers
 

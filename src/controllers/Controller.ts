@@ -1,4 +1,4 @@
-import RequestData from "../http/RequestData";
+import { RequestData } from "uws-router";
 
 export default class Controller {
 

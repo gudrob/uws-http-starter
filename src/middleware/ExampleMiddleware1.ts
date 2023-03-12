@@ -1,5 +1,4 @@
-import { NextFunction } from "../http/NextFunction";
-import RequestData from "../http/RequestData";
+import { RequestData, NextFunction } from "uws-router";
 
 /**
  * An example middleware adding a string to the response
