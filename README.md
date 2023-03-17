@@ -143,56 +143,67 @@ RequestData contains:
 
 ### An example benchmark showing why µWebSockets could be for you
 
-Spawning 4 cluster threads listening on the same socket.
-
-Node Version: v18.14.5
+Node Version: v18.15.0
 
 Hardware: Epyc 7702 KVM, 4 dedicated cores, 16 GB RAM, Ubuntu 20.04.4 LTS (GNU/Linux 5.4.0-109-generic x86_64)
 
-Benchmark Command: wrk -t2 -c1000 -d60s http://127.0.0.1:80/
+Benchmark Command: wrk -t2 -c1000 -d60s http://127.0.0.1:8080/
 
 #### Code:
 
 µWebSockets.js:
 
 ```javascript
-    app.any('/*', (response: HttpResponse, request: HttpRequest) => {
-        response.onAborted(()=> {});
+let app = uws.App({});
 
-        let body = Buffer.from('');
-        response.onData(async (data: ArrayBuffer, isLast: boolean) => {
-            body = Buffer.concat([body, Buffer.from(data)]);
-            
-            if (isLast) {
-                response.end('Hello world!');
-            }
-        });
-    });
+app.any('/*', (response, request) => {
+   response.onAborted(()=> {});
+
+   let body = Buffer.from('');
+   response.onData(async (data, isLast) => {
+        body = Buffer.concat([body, Buffer.from(data)]);
+
+        if (isLast) {
+            response.end('Hello world!');
+        }
+   });
+});
+
+app.listen(8080,(listening) =>{
+    console.log(listening);
+});
 ```
 
 Node HTTP:
 
 ```javascript
-    createServer((request: IncomingMessage, response: ServerResponse) => {
-        let body = '';
-        request.on('data', (chunk: any) => {
-            body += chunk;
+let http = require('http');
 
-            }).on('end', () => {
-                response.end('Hello world!');
-            });
-        });
+let server = http.createServer((request, response) => {
+    let body = '';
+    request.on('data', (chunk) => {
+        body += chunk;
     });
+    request.on('end', () => {
+        response.end('Hello world!');
+    });
+});
+
+server.listen(8080);
 ```
         
 #### Average of 10 sequential runs:
 
 ##### Node HTTP:
-119411.67 requests/sec
+24632.60 requests/sec
 
 ##### µWebSockets.JS:
-184373.09 requests/sec (54,4% gain)
+82385.69 requests/sec (334,45% gain)
 
 No errors in all runs
+
+Edit: Originally the benchmark was run with cluster spawning 4 threads.
+This was a mistake as uWebSockets.js could not max out this way on the 4 core cpu and was competing with the wrk benchmark tool.
+The benchmark was redone with a single thread.
 
 µWebSockets.js is licensed under the Apache License 2.0, please see its LICENSE file for further information.
