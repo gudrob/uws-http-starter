@@ -71,8 +71,6 @@ The third route passes through ExampleMiddleware1 before its handler is called
 
 The fourth route passes through ExampleMiddleware1 and then ExampleMiddleware2 before its handler is called
 
-
-
 ```javascript
 router.listen("127.0.0.1", 8080, (isListening) => {
     console.log(isListening ? `Listening on port ${port}!` : `Error: Could not listen on port ${port}!`)
@@ -102,8 +100,7 @@ isListening will contain the socket if successful, which we won't be using.
     }
 ```
 
-The controller methods are by default designed to be static.
-If you require state within your controllers you might want to implement them as singletons.
+For the best experience the handler methods should be static. If you require state within your controllers take note that the "this" relation will be lost in the endpoint function. You can set the object to be bound to "this" in the endpoint or the group function.
 
 #### Middleware
 
